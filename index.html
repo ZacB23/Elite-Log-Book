@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Commander's Log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --orange: #ff7100;
+    --orange-bright: #ffa040;
+    --orange-dim: #6a3000;
+    --orange-glow: rgba(255, 113, 0, 0.35);
+    --bg: #000000;
+    --panel: #0a0604;
+    --panel-edge: #2a1608;
+    --danger: #b22020;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--orange);
+    font-family: 'Share Tech Mono', 'Consolas', monospace;
+    min-height: 100vh;
+  }
+
+  header {
+    border-bottom: 1px solid var(--orange-dim);
+    padding: 28px 24px 20px;
+    text-align: center;
+  }
+
+  header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.4em;
+    margin: 0;
+    font-size: clamp(20px, 4vw, 32px);
+    color: var(--orange-bright);
+    text-shadow: 0 0 12px var(--orange-glow);
+  }
+
+  header .subtitle {
+    margin-top: 8px;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    color: var(--orange-dim);
+  }
+
+  main {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--orange-dim);
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+
+  .panel-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--orange-bright);
+    margin-bottom: 12px;
+  }
+
+  input[type="text"], textarea {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--orange-dim);
+    border-radius: 6px;
+    color: var(--orange-bright);
+    font-family: inherit;
+    font-size: 15px;
+    padding: 10px 12px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  input[type="text"]:focus, textarea:focus {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 1px var(--orange), 0 0 12px var(--orange-glow);
+  }
+
+  input[type="text"]::placeholder, textarea::placeholder {
+    color: var(--orange-dim);
+    letter-spacing: 0.15em;
+  }
+
+  textarea {
+    min-height: 140px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  .new-entry input { margin-bottom: 10px; }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    justify-content: flex-end;
+  }
+
+  button {
+    background: transparent;
+    border: 1px solid var(--orange);
+    border-radius: 6px;
+    color: var(--orange);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.25em;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+  }
+
+  button:hover {
+    background: var(--orange);
+    color: #000;
+    box-shadow: 0 0 12px var(--orange-glow);
+  }
+
+  button.danger {
+    border-color: var(--danger);
+    color: var(--danger);
+  }
+
+  button.danger:hover {
+    background: var(--danger);
+    color: #000;
+    box-shadow: 0 0 12px rgba(178, 32, 32, 0.5);
+  }
+
+  button.primary {
+    border-width: 2px;
+    padding: 10px 20px;
+  }
+
+  .entry {
+    background: var(--panel);
+    border: 1px solid var(--orange-dim);
+    border-radius: 10px;
+    padding: 18px 20px 18px 22px;
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .entry::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--orange);
+    box-shadow: 0 0 8px var(--orange-glow);
+  }
+
+  .entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 10px;
+    border-bottom: 1px dashed var(--orange-dim);
+    padding-bottom: 8px;
+  }
+
+  .entry-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 500;
+    margin: 0;
+    font-size: 18px;
+    letter-spacing: 0.15em;
+    color: var(--orange-bright);
+    text-shadow: 0 0 6px var(--orange-glow);
+    word-break: break-word;
+  }
+
+  .entry-date {
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--orange);
+    white-space: nowrap;
+  }
+
+  .entry-body {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--orange-bright);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .empty {
+    text-align: center;
+    color: var(--orange-dim);
+    padding: 40px 20px;
+    letter-spacing: 0.2em;
+    font-size: 13px;
+  }
+
+  .edit-input {
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: 520px) {
+    .entry-header { flex-direction: column; gap: 4px; }
+    .entry-date { align-self: flex-start; }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>CMDR DEDALUS' LOG</h1>
+  </header>
+
+  <main>
+    <section class="panel new-entry">
+      <div class="panel-label">// NEW ENTRY</div>
+      <input type="text" id="system-input" placeholder="SYSTEM NAME" maxlength="120" />
+      <textarea id="body-input" placeholder="LOG ENTRY..."></textarea>
+      <div class="actions">
+        <button class="primary" id="add-btn">TRANSMIT LOG</button>
+      </div>
+    </section>
+
+    <section id="entries"></section>
+  </main>
+
+<script>
+  const STORAGE_KEY = 'elite_log_entries';
+  const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const ELITE_YEAR_OFFSET = 1286;
+
+  let editingId = null;
+
+  function loadEntries() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveEntries(entries) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  }
+
+  function formatEliteDate(ts) {
+    const d = new Date(ts);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = MONTHS[d.getMonth()];
+    const year = d.getFullYear() + ELITE_YEAR_OFFSET;
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    return `${day} ${month} ${year} · ${hh}:${mm}`;
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function newId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+
+  function addEntry() {
+    const sysEl = document.getElementById('system-input');
+    const bodyEl = document.getElementById('body-input');
+    const system = sysEl.value.trim();
+    const body = bodyEl.value.trim();
+    if (!system || !body) {
+      sysEl.focus();
+      return;
+    }
+    const entries = loadEntries();
+    entries.push({ id: newId(), system, body, timestamp: Date.now() });
+    saveEntries(entries);
+    sysEl.value = '';
+    bodyEl.value = '';
+    render();
+  }
+
+  function deleteEntry(id) {
+    if (!confirm('Delete this log entry?')) return;
+    saveEntries(loadEntries().filter(e => e.id !== id));
+    if (editingId === id) editingId = null;
+    render();
+  }
+
+  function startEdit(id) {
+    editingId = id;
+    render();
+  }
+
+  function cancelEdit() {
+    editingId = null;
+    render();
+  }
+
+  function saveEdit(id) {
+    const sysEl = document.getElementById('edit-system-' + id);
+    const bodyEl = document.getElementById('edit-body-' + id);
+    const system = sysEl.value.trim();
+    const body = bodyEl.value.trim();
+    if (!system || !body) return;
+    const entries = loadEntries().map(e =>
+      e.id === id ? { ...e, system, body } : e
+    );
+    saveEntries(entries);
+    editingId = null;
+    render();
+  }
+
+  function renderEntry(e) {
+    if (e.id === editingId) {
+      return `
+        <article class="entry">
+          <input type="text" class="edit-input" id="edit-system-${e.id}" value="${escapeHtml(e.system)}" maxlength="120" />
+          <div class="entry-date" style="margin-bottom:8px">${formatEliteDate(e.timestamp)}</div>
+          <textarea id="edit-body-${e.id}">${escapeHtml(e.body)}</textarea>
+          <div class="actions">
+            <button onclick="saveEdit('${e.id}')">SAVE</button>
+            <button onclick="cancelEdit()">CANCEL</button>
+          </div>
+        </article>
+      `;
+    }
+    return `
+      <article class="entry">
+        <div class="entry-header">
+          <h2 class="entry-title">${escapeHtml(e.system)}</h2>
+          <div class="entry-date">${formatEliteDate(e.timestamp)}</div>
+        </div>
+        <p class="entry-body">${escapeHtml(e.body)}</p>
+        <div class="actions">
+          <button onclick="startEdit('${e.id}')">EDIT</button>
+          <button class="danger" onclick="deleteEntry('${e.id}')">DELETE</button>
+        </div>
+      </article>
+    `;
+  }
+
+  function render() {
+    const list = document.getElementById('entries');
+    const entries = loadEntries().sort((a, b) => b.timestamp - a.timestamp);
+    if (entries.length === 0) {
+      list.innerHTML = `<div class="empty">// NO LOG ENTRIES — TRANSMIT YOUR FIRST</div>`;
+      return;
+    }
+    list.innerHTML = entries.map(renderEntry).join('');
+  }
+
+  document.getElementById('add-btn').addEventListener('click', addEntry);
+  render();
+</script>
+</body>
+</html>
